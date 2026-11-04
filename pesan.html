@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pesan Menu</title><meta name="theme-color" content="#1d4ed8">
+<style>
+:root{--pri:#1d4ed8;--pri2:#2563eb;--bg:#f3f6fd;--card:#fff;--tx:#0f172a;--mut:#64748b;--line:#e2e8f0;--bad:#dc2626;--ok:#16a34a}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#141c2f;--tx:#e8eefc;--mut:#93a1bd;--line:#26324d}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:96px}
+header{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;padding:18px 16px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:20px}header p{margin:3px 0 0;font-size:13.5px;opacity:.9}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px}
+.search{margin:12px 0 4px}.search input{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:16px}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:10px 0;scrollbar-width:none}.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--tx);border-radius:99px;padding:8px 16px;font-size:14.5px;font-weight:600}
+.cats button.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.item{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin:0 0 10px}
+.av{flex:none;width:52px;height:52px;border-radius:14px;background:#e0e9ff;color:var(--pri);display:grid;place-items:center;font-weight:800;font-size:18px}
+@media(prefers-color-scheme:dark){.av{background:#1c2a52;color:#9db8ff}}
+.item .in{flex:1;min-width:0}.item b{display:block;font-size:15.5px}.item small{color:var(--mut);font-size:13px}.pr{font-weight:700;color:var(--pri);font-size:14.5px;margin-top:2px}
+.qty{display:flex;align-items:center;gap:8px}.qty button{width:36px;height:36px;border-radius:12px;border:0;background:var(--pri);color:#fff;font-size:20px;font-weight:700}
+.qty button.m{background:var(--line);color:var(--tx)}.qty span{min-width:20px;text-align:center;font-weight:700}
+.add{border:0;background:var(--pri);color:#fff;border-radius:12px;padding:10px 16px;font-weight:700;font-size:14.5px}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line);z-index:6}
+.bar button{display:flex;justify-content:space-between;width:100%;max-width:640px;margin:0 auto;border:0;border-radius:16px;background:var(--pri);color:#fff;padding:15px 18px;font-size:16px;font-weight:700}
+.sheet{position:fixed;inset:0;background:rgba(2,6,23,.55);z-index:20;display:none;align-items:flex-end;justify-content:center}.sheet.on{display:flex}
+.pn{background:var(--card);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.pn h2{margin:0 0 4px;font-size:18px}.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.opt{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border:1px solid var(--line);border-radius:12px;margin:7px 0;font-size:15px}.opt.on{border-color:var(--pri);background:rgba(37,99,235,.1)}
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 5px}
+input.f,select.f,textarea.f{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font-size:16px;font-family:inherit}
+.btn{width:100%;border:0;border-radius:14px;background:var(--pri);color:#fff;padding:15px;font-size:16px;font-weight:700;margin-top:14px}.btn.g{background:var(--line);color:var(--tx)}.btn:disabled{opacity:.55}
+.msg{padding:12px 14px;border-radius:12px;font-size:14.5px;margin:10px 0}.msg.bad{background:rgba(220,38,38,.12);color:var(--bad)}.msg.info{background:rgba(37,99,235,.1)}
+.full{min-height:70vh;display:grid;place-items:center;text-align:center;padding:30px 10px}.full .ic{font-size:54px}.full h2{margin:10px 0 6px}
+.tot{display:flex;justify-content:space-between;font-weight:800;font-size:17px;padding-top:12px}
+.hint{color:var(--mut);font-size:13px;margin-top:6px}
+</style></head><body>
+<header><h1 id="tn">Memuat…</h1><p id="ts"></p></header>
+<div class="wrap" id="app"><div class="full"><div><div class="ic">⏳</div><p>Memuat menu…</p></div></div></div>
+<div class="bar" id="bar" style="display:none"><button onclick="openCart()"><span id="bc">0 item</span><span id="bt">Rp0</span></button></div>
+<div class="sheet" id="sh" onclick="if(event.target===this)closeSheet()"><div class="pn" id="pn"></div></div>
+<script>
+(function(){
+'use strict';
+var q=new URLSearchParams(location.search),SID=q.get('s')||'',FULL=q.get('u')||'',MEJA=(q.get('m')||'').slice(0,40);
+var URLX=FULL||(SID?'https://script.google.com/macros/s/'+encodeURIComponent(SID)+'/exec':'');
+if(URLX&&!/^https:\/\/script\.google\.com\//.test(URLX))URLX='';
+var M=null,CART=[],CAT='Semua',QS='',ORD=null,POLL=null,SENDING=false;
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function rp(n){return 'Rp'+Math.round(n).toLocaleString('id-ID')}
+function sget(k){try{return sessionStorage.getItem(k)}catch(e){return null}}
+function sset(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}
+function sdel(k){try{sessionStorage.removeItem(k)}catch(e){}}
+function did(){var d=null;try{d=localStorage.getItem('twq_did')}catch(e){}if(!d){d=Math.random().toString(36).slice(2,12);try{localStorage.setItem('twq_did',d)}catch(e){}}return d}
+function api(params,body){
+ var c=new AbortController(),t=setTimeout(function(){c.abort()},20000);
+ var u=URLX+(URLX.indexOf('?')>-1?'&':'?')+new URLSearchParams(Object.assign({},params,{_:Date.now()})).toString();
+ var opt=body?{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body),signal:c.signal}:{redirect:'follow',signal:c.signal};
+ if(body)u=URLX;
+ return fetch(u,opt).then(function(r){return r.json()}).finally(function(){clearTimeout(t)});
+}
+function full(ic,h,p,btn){$('#app').innerHTML='<div class="full"><div><div class="ic">'+ic+'</div><h2>'+esc(h)+'</h2><p class="hint" style="font-size:15px">'+esc(p)+'</p>'+(btn||'')+'</div></div>';$('#bar').style.display='none'}
+function key(l){return l.pid+'|'+l.v+'|'+l.t.slice().sort().join(',')}
+function unitPrice(l){var p=prod(l.pid);if(!p)return 0;var v=p.v.filter(function(x){return x.name===l.v})[0];return p.price+(v?v.price:0)+l.t.reduce(function(a,n){var t=p.t.filter(function(x){return x.name===n})[0];return a+(t?t.price:0)},0)}
+function prod(id){return M.products.filter(function(p){return p.id===id})[0]}
+function save(){sset('twq_cart',JSON.stringify(CART))}
+function total(){return CART.reduce(function(a,l){return a+unitPrice(l)*l.qty},0)}
+function count(){return CART.reduce(function(a,l){return a+l.qty},0)}
+function init(){
+ if(!URLX)return full('⚠️','Link tidak valid','Scan ulang QR yang ada di meja.');
+ var o=sget('twq_ord');if(o){try{ORD=JSON.parse(o)}catch(e){ORD=null}}
+ api({action:'qmenu'}).then(function(r){
+  if(!r||!r.ok)return full('⚠️','Tidak bisa memuat menu',(r&&r.err)||'Coba lagi sebentar lagi.','<button class="btn" onclick="location.reload()">Coba lagi</button>');
+  M=r;$('#tn').textContent=r.name||'Menu';document.title=(r.name||'Menu')+' · Pesan';
+  if(!r.on)return full('🔒','Belum menerima pesanan QR',r.msg||'Silakan pesan langsung ke kasir.');
+  var tb=sget('twq_cart');if(tb){try{CART=JSON.parse(tb).filter(function(l){return prod(l.pid)})}catch(e){CART=[]}}
+  $('#ts').textContent=MEJA?MEJA+' · bayar di kasir':'Bayar di kasir';
+  if(ORD&&ORD.id){return showStatus()}
+  render();
+ }).catch(function(){full('📡','Tidak ada koneksi','Periksa internet HP Anda lalu coba lagi.','<button class="btn" onclick="location.reload()">Coba lagi</button>')});
+}
+function render(){
+ var cats=['Semua'];M.products.forEach(function(p){if(cats.indexOf(p.cat)<0)cats.push(p.cat)});
+ var list=M.products.filter(function(p){return(CAT==='Semua'||p.cat===CAT)&&(!QS||p.name.toLowerCase().indexOf(QS)>-1)});
+ var h='<div class="search"><input type="search" placeholder="Cari menu…" value="'+esc(QS)+'" oninput="TWQ.s(this.value)"></div><div class="cats">'+cats.map(function(c,i){return'<button class="'+(c===CAT?'on':'')+'" data-i="'+i+'" onclick="TWQ.c(this.dataset.i)">'+esc(c)+'</button>'}).join('')+'</div>';
+ if(M.note)h+='<div class="msg info">'+esc(M.note)+'</div>';
+ h+=list.length?list.map(function(p){
+  var n=CART.filter(function(l){return l.pid===p.id}).reduce(function(a,l){return a+l.qty},0),opts=p.v.length||p.t.length;
+  return'<div class="item"><div class="av">'+esc(p.name.slice(0,2).toUpperCase())+'</div><div class="in"><b>'+esc(p.name)+'</b><small>'+esc(p.cat)+'</small><div class="pr">'+(p.v.length?'mulai ':'')+rp(p.price+(p.v.length?Math.min.apply(null,p.v.map(function(v){return v.price})):0))+'</div></div>'+
+  (n&&!opts?'<div class="qty"><button class="m" data-id="'+esc(p.id)+'" onclick="TWQ.d(this.dataset.id,-1)">−</button><span>'+n+'</span><button data-id="'+esc(p.id)+'" onclick="TWQ.d(this.dataset.id,1)">+</button></div>':'<button class="add" data-id="'+esc(p.id)+'" onclick="TWQ.a(this.dataset.id)">'+(n?'Tambah ('+n+')':'Tambah')+'</button>')+'</div>'}).join(''):'<p class="hint" style="text-align:center;padding:30px">Menu tidak ditemukan.</p>';
+ $('#app').innerHTML=h;bar();
+}
+function bar(){var n=count();$('#bar').style.display=n&&!ORD?'block':'none';$('#bc').textContent=n+' item';$('#bt').textContent=rp(total())+' · Lihat pesanan'}
+var T={
+ s:function(v){QS=String(v).toLowerCase().trim();var i=$('.search input');var pos=i.selectionStart;render();var j=$('.search input');j.focus();try{j.setSelectionRange(pos,pos)}catch(e){}},
+ c:function(i){var cats=['Semua'];M.products.forEach(function(p){if(cats.indexOf(p.cat)<0)cats.push(p.cat)});CAT=cats[+i]||'Semua';render()},
+ a:function(id){var p=prod(id);if(!p)return;if(p.v.length||p.t.length)return optSheet(p);addLine({pid:id,v:'',t:[],qty:1,note:''});render()},
+ d:function(id,d){var l=CART.filter(function(x){return x.pid===id})[0];if(!l)return;l.qty=Math.max(0,Math.min(20,l.qty+d));CART=CART.filter(function(x){return x.qty>0});save();render()}
+};
+window.TWQ=T;
+function addLine(l){var k=key(l),ex=CART.filter(function(x){return key(x)===k})[0];if(ex)ex.qty=Math.min(20,ex.qty+l.qty);else CART.push(l);save()}
+function sheet(h){$('#pn').innerHTML=h;$('#sh').classList.add('on')}
+function closeSheet(){$('#sh').classList.remove('on')}window.closeSheet=closeSheet;
+var OS=null;
+function optSheet(p){
+ OS={p:p,v:p.v.length?p.v[0].name:'',t:[]};optPaint();
+}
+function optPaint(){
+ var p=OS.p,h='<h2>'+esc(p.name)+'</h2>';
+ if(p.v.length)h+='<label>Pilih varian</label>'+p.v.map(function(v,i){return'<div class="opt '+(OS.v===v.name?'on':'')+'" onclick="TWQ.ov('+i+')"><span>'+esc(v.name)+'</span><b>'+(v.price?'+'+rp(v.price):'')+'</b></div>'}).join('');
+ if(p.t.length)h+='<label>Tambahan (boleh lebih dari satu)</label>'+p.t.map(function(t,i){return'<div class="opt '+(OS.t.indexOf(t.name)>-1?'on':'')+'" onclick="TWQ.ot('+i+')"><span>'+esc(t.name)+'</span><b>'+(t.price?'+'+rp(t.price):'')+'</b></div>'}).join('');
+ h+='<label>Catatan (opsional)</label><input class="f" id="on" maxlength="80" placeholder="Contoh: tidak pedas" value="'+esc(OS.n||'')+'" oninput="TWQ.on(this.value)">';
+ var l={pid:p.id,v:OS.v,t:OS.t,qty:1};
+ h+='<button class="btn" onclick="TWQ.oa()">Tambah · '+rp(unitPrice(l))+'</button><button class="btn g" onclick="closeSheet()">Batal</button>';
+ sheet(h);
+}
+T.ov=function(i){OS.v=OS.p.v[i].name;optPaint()};
+T.ot=function(i){var n=OS.p.t[i].name,x=OS.t.indexOf(n);if(x>-1)OS.t.splice(x,1);else OS.t.push(n);optPaint()};
+T.on=function(v){OS.n=v};
+T.oa=function(){addLine({pid:OS.p.id,v:OS.v,t:OS.t.slice(),qty:1,note:(OS.n||'').slice(0,80)});closeSheet();render()};
+function openCart(){
+ if(!CART.length)return;
+ var h='<h2>Pesanan Anda</h2>'+CART.map(function(l,i){var p=prod(l.pid);return'<div class="row"><div style="flex:1"><b>'+esc(p.name)+(l.v?' ('+esc(l.v)+')':'')+'</b>'+(l.t.length?'<div class="hint">+ '+esc(l.t.join(', '))+'</div>':'')+(l.note?'<div class="hint">“'+esc(l.note)+'”</div>':'')+'<div class="qty" style="margin-top:6px"><button class="m" onclick="TWQ.cq('+i+',-1)">−</button><span>'+l.qty+'</span><button onclick="TWQ.cq('+i+',1)">+</button></div></div><b>'+rp(unitPrice(l)*l.qty)+'</b></div>'}).join('');
+ h+='<div class="tot"><span>Perkiraan total</span><span>'+rp(total())+'</span></div><div class="hint">Pajak/layanan (jika ada) dihitung kasir. Pembayaran dilakukan di kasir.</div>';
+ if(MEJA)h+='<label>Meja</label><input class="f" value="'+esc(MEJA)+'" disabled>';
+ else h+='<label>Pilih meja</label><select class="f" id="mj"><option value="">— pilih meja —</option>'+(M.tables||[]).map(function(t){return'<option>'+esc(t)+'</option>'}).join('')+'</select>';
+ h+='<label>Nama (opsional)</label><input class="f" id="nm" maxlength="40" placeholder="Nama Anda" value="'+esc(sget('twq_nm')||'')+'"><label>Catatan untuk kasir (opsional)</label><textarea class="f" id="nt" rows="2" maxlength="120"></textarea><div id="er"></div>'+
+ '<button class="btn" id="go" onclick="TWQ.go()">Kirim Pesanan</button><button class="btn g" onclick="closeSheet()">Kembali</button>';
+ sheet(h);
+}
+window.openCart=openCart;
+T.cq=function(i,d){var l=CART[i];if(!l)return;l.qty=Math.max(0,Math.min(20,l.qty+d));CART=CART.filter(function(x){return x.qty>0});save();render();if(CART.length)openCart();else closeSheet()};
+T.go=function(){
+ if(SENDING)return;
+ var meja=MEJA||(($('#mj')||{}).value||'');if(!meja){$('#er').innerHTML='<div class="msg bad">Pilih meja dulu.</div>';return}
+ var nm=($('#nm').value||'').trim(),nt=($('#nt').value||'').trim();sset('twq_nm',nm);
+ SENDING=true;var b=$('#go');b.disabled=true;b.textContent='Mengirim…';$('#er').innerHTML='';
+ api({},{action:'qorder',meja:meja,nama:nm,note:nt,did:did(),items:CART.map(function(l){return{pid:l.pid,qty:l.qty,v:l.v,t:l.t,note:l.note||''}})}).then(function(r){
+  SENDING=false;
+  if(!r||!r.ok){b.disabled=false;b.textContent='Kirim Pesanan';$('#er').innerHTML='<div class="msg bad">'+esc((r&&r.err)||'Gagal mengirim. Coba lagi.')+'</div>';return}
+  ORD={id:r.id,meja:meja,total:r.total};sset('twq_ord',JSON.stringify(ORD));CART=[];save();closeSheet();showStatus();
+ }).catch(function(){SENDING=false;b.disabled=false;b.textContent='Kirim Pesanan';$('#er').innerHTML='<div class="msg bad">Koneksi bermasalah. Pesanan belum tentu terkirim — periksa dulu ke kasir sebelum mengirim ulang.</div>'});
+};
+function again(){ORD=null;sdel('twq_ord');clearTimeout(POLL);render()}
+window.TWQ.again=again;
+function showStatus(){
+ clearTimeout(POLL);
+ var nb='<button class="btn g" style="margin-top:18px" onclick="TWQ.again()">Pesan lagi</button>';
+ api({action:'qstat',id:ORD.id}).then(function(r){
+  var st=r&&r.ok?r.status:'?';
+  if(st==='baru'){full('⏳','Menunggu kasir','Pesanan '+(ORD.meja||'')+' sudah terkirim. Mohon tunggu konfirmasi kasir.');POLL=setTimeout(showStatus,4000)}
+  else if(st==='diterima')full('✅','Pesanan diterima','Pesanan Anda sedang disiapkan. Pembayaran dilakukan di kasir.',nb);
+  else if(st==='ditolak')full('❌','Pesanan ditolak',(r.why||'Kasir tidak dapat memproses pesanan ini.')+' Silakan hubungi kasir.',nb);
+  else if(st==='kedaluwarsa')full('⌛','Pesanan kedaluwarsa','Kasir tidak merespons. Silakan hubungi kasir atau pesan ulang.',nb);
+  else{full('⏳','Memeriksa pesanan…','Jika lama, hubungi kasir.');POLL=setTimeout(showStatus,6000)}
+ }).catch(function(){full('📡','Koneksi terputus','Mencoba lagi…');POLL=setTimeout(showStatus,6000)});
+}
+init();
+})();
+</script></body></html>
