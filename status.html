@@ -33,6 +33,7 @@ body{font-family:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",
 @keyframes sh{to{transform:translateX(100%)}}
 .meta{display:grid;gap:10px;margin-top:16px;padding-top:16px;border-top:1px dashed var(--line);font-size:14.5px}
 .meta div{display:flex;justify-content:space-between;gap:14px}.meta span{color:var(--mut)}.meta b{text-align:right;font-weight:700}
+.pay{display:inline-block;padding:3px 11px;border-radius:99px;font-size:13px;font-weight:800;background:rgba(18,161,80,.16);color:var(--ok)}.pay.k{background:rgba(234,150,0,.18);color:#c77700}.pay.v{background:rgba(226,59,59,.15);color:#d32f2f}
 .msg{margin-top:14px;padding:12px 14px;border-radius:16px;font-size:14px;background:var(--glow);line-height:1.45}
 h2{margin:0 0 16px;font-size:15px;font-weight:800;letter-spacing:.02em}
 ol{list-style:none;margin:0;padding:0}
@@ -95,7 +96,7 @@ function draw(r){
  }).join('');
  $('#app').innerHTML='<div class="card"><div class="hero"><div class="ico'+(done?' done':'')+'">'+(done?CHK:CLK)+'</div><div><div class="now">Status saat ini</div><div class="big">'+esc(r.steps[r.i])+'</div><span class="chip'+(done?' done':'')+'">'+(done?'Selesai':'Diproses')+'</span></div></div>'
   +'<div class="bar"><div class="t"><span>Langkah '+(r.i+1)+' dari '+n+'</span><span>'+pct+'%</span></div><div class="track"><div class="fill'+(done?' done':'')+'" id="fl" style="width:0"></div></div></div>'
-  +((r.name||r.desc)?'<div class="meta">'+(r.name?'<div><span>Atas nama</span><b>'+esc(r.name)+'</b></div>':'')+(r.desc?'<div><span>Pesanan</span><b>'+esc(r.desc)+'</b></div>':'')+'</div>':'')
+  +((r.name||r.desc||r.pay)?'<div class="meta">'+(r.name?'<div><span>Atas nama</span><b>'+esc(r.name)+'</b></div>':'')+(r.desc?'<div><span>Pesanan</span><b>'+esc(r.desc)+'</b></div>':'')+(r.pay&&r.pay.l?'<div><span>Pembayaran</span><b><span class="pay '+esc(r.pay.k)+'">'+esc(r.pay.l)+'</span></b></div>':'')+'</div>':'')
   +(r.note?'<div class="msg">'+esc(r.note)+'</div>':'')+'</div>'
   +'<div class="card"><h2>Perjalanan pesanan</h2><ol>'+steps+'</ol></div>'
   +'<div class="upd"><span class="live"></span>Diperbarui '+esc(fmt(r.upd))+' · menyegarkan otomatis</div>';
@@ -104,7 +105,7 @@ function draw(r){
 function load(first){
  api().then(function(r){
   if(!r||!r.ok){if(first)full('⚠️','Pesanan tidak ditemukan',(r&&r.err)||'Periksa kembali link dari toko.','<button class="btn" onclick="location.reload()">Coba lagi</button>');return}
-  var k=JSON.stringify([r.i,r.upd,r.note]);if(k!==LAST){LAST=k;draw(r)}
+  var k=JSON.stringify([r.i,r.upd,r.note,r.pay]);if(k!==LAST){LAST=k;draw(r)}
   if(r.i>=r.steps.length-1){clearInterval(T);T=setInterval(function(){load(false)},120000)}
  }).catch(function(){if(first)full('📡','Tidak bisa memuat','Periksa koneksi internet, lalu coba lagi.','<button class="btn" onclick="location.reload()">Coba lagi</button>')});
 }
